@@ -8,6 +8,7 @@
     1. [Giới thiệu về xác suất Bayes](#1-giới-thiệu-về-xác-suất-bayes)
     2. [Giả thiết độc lập có điều kiện trong Naive Bayes](#2-giả-thiết-độc-lập-có-điều-kiện-trong-naive-bayes)
     3. [Các biến thể của Naive Bayes](#3-các-biến-thể-của-naive-bayes)
+    4. [Ưu, nhược điểm của Naive Bayes](#4-ưu-nhược-điểm-của-naive-bayes)
 
 <!-- /TOC -->
 ### Chương 1: GIỚI THIỆU
