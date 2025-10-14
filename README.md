@@ -173,7 +173,9 @@ $\Rightarrow$ Tổng số từ: 6
 <br>
 
 $$P(C|d) \space ∝ \space P(C) \bullet \prod_iP(w_i|C)^{f_i}$$
+<br>
 
+Trong đó $f_i$ là tần suất xuất hiện của từ thứ $i$ trong xâu kiểm tra.
 <br>
 
 **Xác suất tiên nghiệm**: 
