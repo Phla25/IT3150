@@ -46,9 +46,11 @@ Ngôn ngữ lập trình được lựa chọn là Python với những ưu đi�
 | **Naive Bayes Classifier**         | Bộ phân loại dựa trên công thức xác suất Bayes với giả định các đặc trưng là độc lập có điều kiện.                                                           |
 | **Precision / Recall / F1-score**  | Các chỉ số đánh giá chất lượng mô hình phân loại.                                                                                                            |
 <br>
+
 ### Chương 2: CƠ SỞ LÝ THUYẾT VÀ MÔ HÌNH NAIVE BAYES
 #### 1. Giới thiệu về xác suất Bayes:
     Thuật toán Naive Bayes được xây dựng dựa trên định lý Bayes, một trong những nền tảng cơ bản của xác suất thống kê. Định lý Bayes mô tả mối quan hệ giữa xác suất tiên nghiệm, xác suất có điều kiện, và xác suất hậu nghiệm của các biến ngẫu nhiên.
+
 <br>
 
 $$ P(Y|X) = \frac{P(X|Y)P(Y)}{P(X)} $$
@@ -60,7 +62,7 @@ Trong đó:
 - $P(X|Y)$ là xác suất tiên ***likelihood*** - khả năng xảy ra dữ liệu $X$ khi biết lớp $Y$.
 - $P(Y)$ là xác suất tiên nghiệm - xác suất xảy ra lớp $Y$ trước khi quan sát dữ liệu
 - $P(X)$ là xác suất ***biên***, dùng để chuẩn hóa.
-<br>
+
 
 Trong bài toán phân loại, xác suất ***biên $P(X)$*** là hằng số chung cho mọi lớp, nên ta có thể so sánh trực tiếp:
 
