@@ -32,7 +32,10 @@ Ngôn ngữ lập trình được lựa chọn là Python với những ưu đi�
 | **joblib**                     | Dùng để lưu trữ và tải lại mô hình đã huấn luyện (serialization).                                                                                                            |
 | **Git / GitHub / CI Pipeline** | Dùng để quản lý mã nguồn, tích hợp kiểm thử mô hình tự động vào pipeline DevOps.                                                                                             |
 <br>
+
 #### 2. Một số thuật ngữ cần lưu ý
+<br>
+
 | Thuật ngữ                          | Giải thích                                                                                                                                                   |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **DevOps pipeline**                | Quy trình tự động hóa việc xây dựng (build), kiểm thử (test), và triển khai (deploy) phần mềm.                                                               |
@@ -147,6 +150,7 @@ Trong đó:
 **B1:** Tập từ vựng $V$ = **{buy, cheap, now, limited, offer, meet, me, let's, catch, up}** 
 
 <br>
+
 $\Rightarrow v = 10$
 
 **B2:** 
