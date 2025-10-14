@@ -50,11 +50,9 @@ Ngôn ngữ lập trình được lựa chọn là Python với những ưu đi�
 ### Chương 2: CƠ SỞ LÝ THUYẾT VÀ MÔ HÌNH NAIVE BAYES
 #### 1. Giới thiệu về xác suất Bayes:
     Thuật toán Naive Bayes được xây dựng dựa trên định lý Bayes, một trong những nền tảng cơ bản của xác suất thống kê. Định lý Bayes mô tả mối quan hệ giữa xác suất tiên nghiệm, xác suất có điều kiện, và xác suất hậu nghiệm của các biến ngẫu nhiên.
-
 <br>
 
 $$ P(Y|X) = \frac{P(X|Y)P(Y)}{P(X)} $$
-
 <br>
 
 Trong đó:
@@ -63,35 +61,29 @@ Trong đó:
 - $P(Y)$ là xác suất tiên nghiệm - xác suất xảy ra lớp $Y$ trước khi quan sát dữ liệu
 - $P(X)$ là xác suất ***biên***, dùng để chuẩn hóa.
 
-
-Trong bài toán phân loại, xác suất ***biên $P(X)$*** là hằng số chung cho mọi lớp, nên ta có thể so sánh trực tiếp:
-
+Trong bài toán phân loại, xác suất ***biên*** $P(X)$ là hằng số chung cho mọi lớp, nên ta có thể so sánh trực tiếp:
 <br>
 
 $$\hat{Y} = argmax_{Y}P(Y)P(X|Y)$$
-
 <br>
 
 #### 2. Giả thiết độc lập có điều kiện trong Naive Bayes
 Điểm đặc trưng của Naive Bayes là **giả định các đặc trưng đầu vào là độc lập có điều kiện** khi biết lớp $Y$:
-
 <br>
 
 $$P(X|Y) = \prod_{i=1}^{n}P(X_i|Y)$$
-
 <br>
 
 Giả định này đơn giản hóa việc tính toán xác suất, giúp mô hình hoạt động nhanh và dễ huấn luyện, ngay cả với dữ liệu có nhiều thuộc tính.
-
 <br>
 
 Mặc dù trong thực tế các đặc trưng thường có quan hệ phụ thuộc lẫn nhau, Naive Bayes vẫn cho kết quả đáng tin cậy trong nhiều ứng dụng, đặc biệt là ***phân loại văn bản, phân loại email spam, và phân tích rủi ro***.
-
 <br>
 
 #### 3. Các biến thể của Naive Bayes
 **a. Gaussian Naive Bayes**
 <br>
+
 Gaussian Naive Bayes là một dạng của phương pháp Naive Bayes hoạt động với ***các thuộc tính liên tục (continuous attributes)*** và các đặc trưng dữ liệu (data features) ***tuân theo phân phối Gaussian (Gaussian distribution) trong toàn bộ tập dữ liệu***. Giả định “ngây thơ” (naive) này giúp đơn giản hóa các phép tính và làm cho mô hình trở nên nhanh chóng và hiệu quả. Gaussian Naive Bayes được sử dụng rộng rãi vì nó hoạt động tốt ngay cả với các tập dữ liệu nhỏ và dễ dàng để triển khai và giải thích.
 <br>
 
@@ -102,8 +94,8 @@ Multinomial Naive Bayes (MNB) là một trong những biến thể của thuật
 <br>
 
 **Cách Multinominal Naive Bayes thực hiện**
-
 <br>
+
 Trong Multinomial Naive Bayes, từ "Naive" (Ngây thơ) có nghĩa là phương pháp này giả định rằng tất cả các đặc trưng, chẳng hạn như các từ trong một câu, là độc lập với nhau; và "Multinomial" (Đa thức) đề cập đến số lần một từ xuất hiện hoặc tần suất một danh mục xảy ra. Nó hoạt động bằng cách sử dụng số lần đếm từ để phân loại văn bản. Ý tưởng chính là nó giả định mỗi từ trong một tin nhắn hoặc một đặc trưng là độc lập với những từ khác. Điều này có nghĩa là sự hiện diện của một từ không ảnh hưởng đến sự hiện diện của một từ khác, làm cho mô hình dễ sử dụng.
 <br>
 
@@ -114,14 +106,12 @@ Mô hình xem xét số lần mỗi từ xuất hiện trong các tin nhắn t�
 <br>
 
 $$P(X) = \frac{n!}{n_1!n_2!n_3!...n_m!}p_1^{n_1}p_2^{n_2}p_3^{n_3}...p_m^{n_m}$$
-
 <br>
 
 Trong đó:
 - $n$ là tổng số lượt thử nghiệm
 - $n_i$ là **số đếm** sự xuất hiện của đầu ra $i$
 - $p_i$ là xác suất xảy ra đầu ra $i$
-
 <br>
 
 Để ước tính mức độ có khả năng xuất hiện của mỗi từ trong một lớp cụ thể, chẳng hạn như "thư rác" (spam) hoặc "không phải thư rác" (not spam), chúng ta sử dụng một phương pháp gọi là **Ước lượng Khả năng Hợp lý Tối đa (Maximum Likelihood Estimation - MLE)**. Điều này giúp tìm ra các xác suất dựa trên số lần đếm thực tế từ dữ liệu của chúng ta. Công thức là:
@@ -137,7 +127,6 @@ Trong đó:
 <br>
 
 **Ví dụ**
-
 <br>
 
 | Message ID | Message Text | Class |
@@ -150,7 +139,6 @@ Trong đó:
 <br>
 
 **B1:** Tập từ vựng $V$ = **{buy, cheap, now, limited, offer, meet, me, let's, catch, up}** 
-
 <br>
 
 $\Rightarrow v = 10$
@@ -181,10 +169,93 @@ $\Rightarrow$ Tổng số từ: 6
 **B3:** Message mẫu: *"Buy now"*
 
 **B4:** Áp dụng công thức MNB:
+<br>
 
+$$P(C|d) \space ∝ \space P(C) \bullet \prod_iP(w_i|C)^{f_i}$$
 
+<br>
 
+**Xác suất tiên nghiệm**: 
+<br>
 
+$$
+P(Spam) = \frac{D_{Spam}}{D} = \frac{2}{4} = 0.5
+\newline
+P(Not Spam) = \frac{D_{Not Spam}}{D} = \frac{2}{4} = 0.5
+$$
+
+<br>
+
+Trong đó:
+- $D_{Spam}$ là Số văn bản nhãn Spam
+- $D_{Not Spam}$ la số văn bản nhãn Not Spam
+- $D$ là tổng số văn bản
+<br>
+
+**Áp dụng công thức làm mịn Laplace** Mục đích là tránh xác suất bằng 0
+<br>
+
+$$P(w|C) = \frac{count(w,C)+\alpha}{(total words in C) + \alpha v}$$
+<br>
+
+Trong đó: $\alpha$ là hệ số làm mịn Laplace (thường bằng 1)
+<br>
+
+**Với lớp nhãn Spam**
+<br>
+
+$$
+P(buy|Spam) = \frac{2+1}{6+10} = \frac{3}{16} 
+\newline
+P(new|Spam) = \frac{1+1}{6+10} = \frac{2}{16}
+\newline
+P(Spam|d) \space ∝ \space 0.5\bullet\frac{3}{16}\bullet\frac{2}{16}=\frac{3}{256}
+$$
+
+<br>
+
+**Với lớp nhãn Not Spam**
+<br>
+
+$$
+P(buy|Not Spam) = \frac{0+1}{6+10} = \frac{1}{16} 
+\newline
+P(new|Not Spam) = \frac{1+1}{6+10} = \frac{2}{16}
+\newline
+P(Not Spam|d) \space ∝ \space 0.5\bullet\frac{1}{16}\bullet\frac{2}{16}=\frac{1}{256}
+$$
+
+<br>
+
+**B5: Gán nhãn cuối cùng**
+<br>
+
+$Vì, \space P(Spam|d) = \frac{3}{256} > P(Not Spam|d) = \frac{1}{256} \newline$
+Nên *"buy now"* có nhãn là ***Spam***.
+
+<br>
+
+**c. Bernoulli Naive Bayes**
+<br>
+
+Bernoulli Naive Bayes là một dạng con (subcategory) của Thuật toán Naive Bayes. Nó thường được sử dụng khi dữ liệu ở dạng nhị phân (binary) và nó mô hình hóa sự xuất hiện của các đặc trưng (features) bằng cách sử dụng phân phối Bernoulli (Bernoulli distribution). Nó được dùng để phân loại các đặc trưng nhị phân như 'Có' hoặc 'Không', '1' hoặc '0', 'Đúng' hoặc 'Sai', v.v. Cần lưu ý rằng các đặc trưng ở đây là độc lập với nhau.
+<br>
+
+**Trong đề tài này, dữ liệu rủi ro bảo mật được trích xuất từ các báo cáo pipeline, nên Multinomial Naive Bayes được sử dụng là chủ yếu.**
+<br>
+
+#### 4. Ưu, nhược điểm của Naive Bayes 
+**Ưu điểm**
+- Đơn giản, dễ cài đặt, tốc độ huấn luyện và dự đoán nhanh.
+- Hoạt động hiệu quả trên tập dữ liệu lớn, đặc biệt khi số lượng đặc trưng cao.
+- Không yêu cầu tài nguyên tính toán quá mạnh.
+- Dễ dàng mở rộng và tích hợp với các pipeline hiện có trong DevOps.
+<br>
+
+**Nhược điểm**
+- Giả thiết độc lập có điều kiện thường không đúng hoàn toàn trong thực tế, làm giảm độ chính xác.
+- Nhạy cảm với dữ liệu đầu vào có xác suất bằng 0 (giải quyết bằng Laplace smoothing).
+- Không mô hình hóa tốt các mối tương quan giữa đặc trưng, nên hiệu quả có thể giảm nếu dữ liệu phức tạp.
 
 
 
