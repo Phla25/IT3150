@@ -285,59 +285,59 @@ Cho tập huấn luyện $ D = {(x, y)} $ với:
 
 Mục tiêu là tìm hàm giả thuyết $ h: X \to Y $ sao cho:
 
-$
+$$
 h(x) = \arg\max_{y \in Y} p(y|x)
-$
+$$
 
 Theo định lý Bayes:
 
-$
+$$
 p(y|x) = \frac{p(x, y)}{p(x)} \propto p(x, y)
-$
+$$
 
 Vì $p(x)$ là hằng số đối với mọi $y$, ta chỉ cần cực đại hóa $p(x, y)$.
 
 ##### 2.2. Chứng minh công thức xác suất kết hợp
 
 Ta có:
-$
+$$
 p(x, y) = p(x_1, ..., x_m, y_1, ..., y_n)
-$
+$$
 
 Sử dụng quy tắc chuỗi xác suất:
-$
+$$
 p(x, y) = p(x_1|x_2,...,x_m,y_1,...,y_n) \cdot ... \cdot p(x_m|y_1,...,y_n) \cdot p(y_1|y_2,...,y_n) ... p(y_n)
-$
+$$
 
 Giả định **độc lập có điều kiện (Naïve assumption)**: các đặc trưng và nhãn độc lập có điều kiện theo $y_n$:
 
-$
+$$
 p(x_i | x_{i+1}, ..., x_m, y_1, ..., y_n) \approx p(x_i | y_n)
-$
+$$
 
 Suy ra:
 
-$
+$$
 p(x, y) \approx p(y_n) \prod_{i=1}^{m} p(x_i | y_n) \prod_{j=1}^{n-1} p(y_j | y_n)
-$
+$$
 
 Tổng quát cho mọi nhãn $y_k$:
 
-$
+$$
 p(x, y) \approx p(y_k) \prod_{i=1}^{m} p(x_i | y_k) \prod_{j=1}^{n} p(y_j | y_k)
-$
+$$
 
 Để tổng hợp tất cả ước lượng từ $n$ nhãn, tác giả dùng **trung bình hình học (geometric mean)**:
 
-$
+$$
 p(x, y) \approx \left( \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i) \right)^{1/n}
-$
+$$
 
 Do đó, luật quyết định của bộ phân loại MLNB-LD là:
 
-$
+$$
 h(x) = \arg\max_{y \in Y} \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
-$
+$$
 
 **Giải thích:**
 * Đầu ra là vector $y$ nằm trong tập vector nhãn $Y$
@@ -345,21 +345,19 @@ $
 * Thành phần $p(y_k|y_i)$: thể hiện mối phụ thuộc giữa các cặp nhãn.
 * Trung bình hình học giúp giảm nhiễu khi có các giá trị xác suất cực nhỏ.
 
----
-
 ##### 2.3. Thuật toán MLNB-LD (Algorithm 1)
 
 1. Tính xác suất biên của mỗi nhãn: $p(y_i)$
 2. Tính xác suất có điều kiện giữa nhãn: $p(y_k|y_i) = p(y_k, y_i)/p(y_i)$
 3. Tính xác suất có điều kiện giữa đặc trưng và nhãn: $p(x_j|y_i) = p(x_j, y_i)/p(y_i)$
 4. Tính giá trị $S(y)$:
-   $
+   $$
    S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
-   $
+   $$
 5. Chọn nhãn dự đoán:
-   $
+   $$
    y^* = \arg\max_{y \in Y} S(y)
-   $
+   $$
 
 Độ phức tạp tính toán của thuật toán xấp xỉ $(1 + 2n + 2m|X|) |Y|$.
 ##### 2.4. Tài liệu tham khảo chính
