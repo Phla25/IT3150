@@ -9,6 +9,14 @@
     2. [Giả thiết độc lập có điều kiện trong Naive Bayes](#2-giả-thiết-độc-lập-có-điều-kiện-trong-naive-bayes)
     3. [Các biến thể của Naive Bayes](#3-các-biến-thể-của-naive-bayes)
     4. [Ưu, nhược điểm của Naive Bayes](#4-ưu-nhược-điểm-của-naive-bayes)
+3. [Chương 3: Naive Bayes đa nhãn và giả định phụ thuộc giữa các nhãn](#chương-3-naive-bayes-gán-đa-nhãn-với-giả-định-phụ-thuộc-giữa-các-nhãn)
+    1. [Giới thiệu](#1-giới-thiệu)
+    2. [Phương pháp đề xuất và chứng minh toán học](#2-phương-pháp-đề-xuất-và-chứng-minh-toán-học)
+        1. [Bài toán đặt ra](#21-bài-toán-đặt-ra)
+        2. [Chứng minh công thức xác suất kết hợp](#22-chứng-minh-công-thức-xác-suất-kết-hợp)
+        3. [Thuật toán Multi Labeling Naive Bayes - Label Dependency](#23-thuật-toán-mlnb-ld-algorithm-1)
+        4. [Tài liệu tham khảo](#tài-liệu-tham-khảo-chính)
+    
 
 <!-- /TOC -->
 ### Chương 1: GIỚI THIỆU
@@ -260,5 +268,102 @@ Bernoulli Naive Bayes là một dạng con (subcategory) của Thuật toán Nai
 - Nhạy cảm với dữ liệu đầu vào có xác suất bằng 0 (giải quyết bằng Laplace smoothing).
 - Không mô hình hóa tốt các mối tương quan giữa đặc trưng, nên hiệu quả có thể giảm nếu dữ liệu phức tạp.
 
+### Chương 3: NAIVE BAYES GÁN ĐA NHÃN VỚI GIẢ ĐỊNH PHỤ THUỘC GIỮA CÁC NHÃN
+#### 1. Giới thiệu
+**Bài toán phân loại đa nhãn (Multilabel Classification)** cho phép mỗi mẫu dữ liệu thuộc về nhiều nhãn cùng lúc, ví dụ một bài báo có thể mang nhãn *Khoa học* và *Giáo dục* đồng thời. Trong khi đó, bộ phân loại **Naïve Bayes (NB)** cổ điển giả định các nhãn là **độc lập**, dẫn đến kết quả không chính xác khi tồn tại **phụ thuộc giữa các nhãn**.
+
+Để khắc phục hạn chế này, nhóm tác giả Hae-Cheon Kim, Jin-Hyeong Park, Dae-Won Kim, và Jaesung Lee (2020) đề xuất mô hình **MLNB-LD (Multilabel Naïve Bayes with Label Dependence)**. Mô hình này mở rộng Naïve Bayes bằng cách **xem xét mối quan hệ giữa các cặp nhãn (label pairs)** trong quá trình tính toán xác suất hậu nghiệm.
+
+#### 2. Phương pháp đề xuất và chứng minh toán học
+
+##### 2.1. Bài toán đặt ra
+
+Cho tập huấn luyện $ D = {(x, y)} $ với:
+
+* $ x = (x_1, x_2, ..., x_m) $: vector đặc trưng đầu vào.
+* $ y = (y_1, y_2, ..., y_n) $ : vector nhãn, trong đó $ y_i \in \{0, 1\} $.
+
+Mục tiêu là tìm hàm giả thuyết $ h: X \to Y $ sao cho:
+
+$
+h(x) = \arg\max_{y \in Y} p(y|x)
+$
+
+Theo định lý Bayes:
+
+$
+p(y|x) = \frac{p(x, y)}{p(x)} \propto p(x, y)
+$
+
+Vì $p(x)$ là hằng số đối với mọi $y$, ta chỉ cần cực đại hóa $p(x, y)$.
+
+##### 2.2. Chứng minh công thức xác suất kết hợp
+
+Ta có:
+$
+p(x, y) = p(x_1, ..., x_m, y_1, ..., y_n)
+$
+
+Sử dụng quy tắc chuỗi xác suất:
+$
+p(x, y) = p(x_1|x_2,...,x_m,y_1,...,y_n) \cdot ... \cdot p(x_m|y_1,...,y_n) \cdot p(y_1|y_2,...,y_n) ... p(y_n)
+$
+
+Giả định **độc lập có điều kiện (Naïve assumption)**: các đặc trưng và nhãn độc lập có điều kiện theo $y_n$:
+
+$
+p(x_i | x_{i+1}, ..., x_m, y_1, ..., y_n) \approx p(x_i | y_n)
+$
+
+Suy ra:
+
+$
+p(x, y) \approx p(y_n) \prod_{i=1}^{m} p(x_i | y_n) \prod_{j=1}^{n-1} p(y_j | y_n)
+$
+
+Tổng quát cho mọi nhãn $y_k$:
+
+$
+p(x, y) \approx p(y_k) \prod_{i=1}^{m} p(x_i | y_k) \prod_{j=1}^{n} p(y_j | y_k)
+$
+
+Để tổng hợp tất cả ước lượng từ $n$ nhãn, tác giả dùng **trung bình hình học (geometric mean)**:
+
+$
+p(x, y) \approx \left( \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i) \right)^{1/n}
+$
+
+Do đó, luật quyết định của bộ phân loại MLNB-LD là:
+
+$
+h(x) = \arg\max_{y \in Y} \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
+$
+
+**Giải thích:**
+* Đầu ra là vector $y$ nằm trong tập vector nhãn $Y$
+* Thành phần $p(x_j|y_i)$: xác suất đặc trưng theo nhãn.
+* Thành phần $p(y_k|y_i)$: thể hiện mối phụ thuộc giữa các cặp nhãn.
+* Trung bình hình học giúp giảm nhiễu khi có các giá trị xác suất cực nhỏ.
+
+---
+
+##### 2.3. Thuật toán MLNB-LD (Algorithm 1)
+
+1. Tính xác suất biên của mỗi nhãn: $p(y_i)$
+2. Tính xác suất có điều kiện giữa nhãn: $p(y_k|y_i) = p(y_k, y_i)/p(y_i)$
+3. Tính xác suất có điều kiện giữa đặc trưng và nhãn: $p(x_j|y_i) = p(x_j, y_i)/p(y_i)$
+4. Tính giá trị $S(y)$:
+   $
+   S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
+   $
+5. Chọn nhãn dự đoán:
+   $
+   y^* = \arg\max_{y \in Y} S(y)
+   $
+
+Độ phức tạp tính toán của thuật toán xấp xỉ $(1 + 2n + 2m|X|) |Y|$.
+##### 2.4. Tài liệu tham khảo chính
+
+* Kim, H.-C., Park, J.-H., Kim, D.-W., & Lee, J. (2020). *Multilabel Naïve Bayes Classification Considering Label Dependence*. Pattern Recognition Letters. [https://doi.org/10.1016/j.patrec.2020.06.021](https://doi.org/10.1016/j.patrec.2020.06.021)
 
 
