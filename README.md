@@ -353,16 +353,16 @@ $$
 2. Tính xác suất có điều kiện giữa nhãn: $p(y_k|y_i) = p(y_k, y_i)/p(y_i)$
 3. Tính xác suất có điều kiện giữa đặc trưng và nhãn: $p(x_j|y_i) = p(x_j, y_i)/p(y_i)$
 4. Tính giá trị $S(y)$:
-   
-   $$
-   S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
-   $$
+
+$$
+S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
+$$
    
 6. Chọn nhãn dự đoán:
    
-   $$
-   y^* = \arg\max_{y \in Y} S(y)
-   $$
+$$
+y^* = \arg\max_{y \in Y} S(y)
+$$
 
 Độ phức tạp tính toán của thuật toán xấp xỉ $(1 + 2n + 2m|X|) |Y|$.
 ##### 2.4. Tài liệu tham khảo chính
