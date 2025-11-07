@@ -15,7 +15,7 @@
         1. [Bài toán đặt ra](#21-bài-toán-đặt-ra)
         2. [Chứng minh công thức xác suất kết hợp](#22-chứng-minh-công-thức-xác-suất-kết-hợp)
         3. [Thuật toán Multi Labeling Naive Bayes - Label Dependency](#23-thuật-toán-mlnb-ld-algorithm-1)
-        4. [Tài liệu tham khảo](#tài-liệu-tham-khảo-chính)
+        4. [Tài liệu tham khảo](#24-tài-liệu-tham-khảo-chính)
     
 
 <!-- /TOC -->
