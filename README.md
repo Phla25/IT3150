@@ -280,10 +280,10 @@ Bernoulli Naive Bayes là một dạng con (subcategory) của Thuật toán Nai
 
 Cho tập huấn luyện $ D = {(x, y)} $ với:
 
-* $ x = (x_1, x_2, ..., x_m) $: vector đặc trưng đầu vào.
-* $ y = (y_1, y_2, ..., y_n) $ : vector nhãn, trong đó $ y_i \in \{0, 1\} $.
+* $x = (x_1, x_2, ..., x_m)$: vector đặc trưng đầu vào.
+* $y = (y_1, y_2, ..., y_n)$ : vector nhãn, trong đó $y_i \in \{0, 1\}$.
 
-Mục tiêu là tìm hàm giả thuyết $ h: X \to Y $ sao cho:
+Mục tiêu là tìm hàm giả thuyết $h: X \to Y$ sao cho:
 
 $$
 h(x) = \arg\max_{y \in Y} p(y|x)
@@ -300,11 +300,13 @@ Vì $p(x)$ là hằng số đối với mọi $y$, ta chỉ cần cực đại h
 ##### 2.2. Chứng minh công thức xác suất kết hợp
 
 Ta có:
+
 $$
 p(x, y) = p(x_1, ..., x_m, y_1, ..., y_n)
 $$
 
 Sử dụng quy tắc chuỗi xác suất:
+
 $$
 p(x, y) = p(x_1|x_2,...,x_m,y_1,...,y_n) \cdot ... \cdot p(x_m|y_1,...,y_n) \cdot p(y_1|y_2,...,y_n) ... p(y_n)
 $$
@@ -351,10 +353,13 @@ $$
 2. Tính xác suất có điều kiện giữa nhãn: $p(y_k|y_i) = p(y_k, y_i)/p(y_i)$
 3. Tính xác suất có điều kiện giữa đặc trưng và nhãn: $p(x_j|y_i) = p(x_j, y_i)/p(y_i)$
 4. Tính giá trị $S(y)$:
+   
    $$
    S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
    $$
-5. Chọn nhãn dự đoán:
+   
+6. Chọn nhãn dự đoán:
+   
    $$
    y^* = \arg\max_{y \in Y} S(y)
    $$
