@@ -103,8 +103,8 @@ Dưới đây là bảng so sánh hiệu năng giữa thuật toán đề xuất
 ---
 
 ## Biểu đồ (Visualization)
-![Biểu đồ so sánh](confusion_matrices.png)
-![Biểu đồ so sánh](confusion_matrix_script3.png)
+![Biểu đồ so sánh](/report/figures/confusion_matrices.png)
+![Biểu đồ so sánh](/report/figures/confusion_matrix_script3.png)
 ---
 
 ## Tác giả (Author)
