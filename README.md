@@ -1,372 +1,117 @@
-# CÀI ĐẶT THUẬT TOÁN NAIVE BAYES
-<!-- TOC -->
-## [Mục Lục](#mục-lục)
-1. [Chương 1: Giới thiệu](#chương-1-giới-thiệu)
-    1. [Công nghệ sử dụng trong dự án](#1-công-nghệ-sử-dụng-trong-dự-án)
-    2. [Một số thuật ngữ cần lưu ý](#2-một-số-thuật-ngữ-cần-lưu-ý)
-2. [Chương 2: Cơ sở lý thuyết và mô hình Naive Bayes](#chương-2-cơ-sở-lý-thuyết-và-mô-hình-naive-bayes)
-    1. [Giới thiệu về xác suất Bayes](#1-giới-thiệu-về-xác-suất-bayes)
-    2. [Giả thiết độc lập có điều kiện trong Naive Bayes](#2-giả-thiết-độc-lập-có-điều-kiện-trong-naive-bayes)
-    3. [Các biến thể của Naive Bayes](#3-các-biến-thể-của-naive-bayes)
-    4. [Ưu, nhược điểm của Naive Bayes](#4-ưu-nhược-điểm-của-naive-bayes)
-3. [Chương 3: Naive Bayes đa nhãn và giả định phụ thuộc giữa các nhãn](#chương-3-naive-bayes-gán-đa-nhãn-với-giả-định-phụ-thuộc-giữa-các-nhãn)
-    1. [Giới thiệu](#1-giới-thiệu)
-    2. [Phương pháp đề xuất và chứng minh toán học](#2-phương-pháp-đề-xuất-và-chứng-minh-toán-học)
-        1. [Bài toán đặt ra](#21-bài-toán-đặt-ra)
-        2. [Chứng minh công thức xác suất kết hợp](#22-chứng-minh-công-thức-xác-suất-kết-hợp)
-        3. [Thuật toán Multi Labeling Naive Bayes - Label Dependency](#23-thuật-toán-mlnb-ld-algorithm-1)
-        4. [Tài liệu tham khảo](#24-tài-liệu-tham-khảo-chính)
-    
-
-<!-- /TOC -->
-### Chương 1: GIỚI THIỆU
-#### 1. Công nghệ sử dụng trong dự án
-    Dự án “Cài đặt thuật toán Naive Bayes để phân tích và định lượng rủi ro bảo mật trong DevOps pipelines” được xây dựng và triển khai hoàn toàn bằng ngôn ngữ Python, một ngôn ngữ lập trình mạnh mẽ, phổ biến trong lĩnh vực khoa học dữ liệu (Data Science) và học máy (Machine Learning). 
-<br>
-Ngôn ngữ lập trình được lựa chọn là Python với những ưu điểm:
-    
-- Cú pháp đơn giản, dễ đọc, dễ mở rộng.
-- Có hệ sinh thái thư viện phong phú phục vụ cho thống kê, học máy, và trực quan hóa dữ liệu.
-- Dễ dàng tích hợp với các pipeline DevOps.
-<br>
-
-| Công nghệ / Thư viện           | Vai trò / Mục đích sử dụng                                                                                                                                                   |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Python 3.11+**               | Ngôn ngữ lập trình chính để phát triển và huấn luyện mô hình Naive Bayes.                                                                                                    |
-| **scikit-learn**               | Thư viện học máy nổi tiếng, cung cấp sẵn các thuật toán Naive Bayes (GaussianNB, MultinomialNB, BernoulliNB) cùng các công cụ hỗ trợ tiền xử lý dữ liệu và đánh giá mô hình. |
-| **pandas**                     | Xử lý và phân tích dữ liệu dạng bảng (DataFrame), hỗ trợ đọc/ghi file CSV, thống kê mô tả, và chuyển đổi dữ liệu phục vụ huấn luyện.                                         |
-| **numpy**                      | Cung cấp các phép toán đại số tuyến tính, xác suất và xử lý mảng dữ liệu hiệu năng cao.                                                                                      |
-| **matplotlib / seaborn**       | Thư viện trực quan hóa dữ liệu, được dùng để vẽ biểu đồ phân bố rủi ro, confusion matrix và so sánh kết quả mô hình.                                                         |
-| **jupyter notebook**           | Môi trường lập trình tương tác, phục vụ cho quá trình thử nghiệm, trực quan hóa và trình bày mô hình, cho phép thực nghiệm mô hình nhanh chóng và trình bày kết quả theo từng ô lệnh (cell).                                                                        |
-| **joblib**                     | Dùng để lưu trữ và tải lại mô hình đã huấn luyện (serialization).                                                                                                            |
-| **Git / GitHub / CI Pipeline** | Dùng để quản lý mã nguồn, tích hợp kiểm thử mô hình tự động vào pipeline DevOps.                                                                                             |
-<br>
-
-#### 2. Một số thuật ngữ cần lưu ý
-<br>
-
-| Thuật ngữ                          | Giải thích                                                                                                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **DevOps pipeline**                | Quy trình tự động hóa việc xây dựng (build), kiểm thử (test), và triển khai (deploy) phần mềm.                                                               |
-| **Security risk (rủi ro bảo mật)** | Khả năng một sự kiện hoặc thành phần trong hệ thống gây ra mối nguy cho bảo mật thông tin, ví dụ: lộ key, cấu hình sai, gói phụ thuộc độc hại.               |
-| **Feature (đặc trưng)**            | Các thuộc tính đầu vào của mô hình học máy. Trong đề tài này, chúng có thể là số lượng lỗi, số cảnh báo bảo mật, tần suất commit, hoặc thời gian triển khai. |
-| **Label (nhãn)**                   | Giá trị đầu ra mà mô hình dự đoán — ví dụ “Nguy cơ cao”, “Trung bình”, “Thấp”.                                                                               |
-| **Training / Testing set**         | Tập dữ liệu dùng để huấn luyện và kiểm tra mô hình.                                                                                                          |
-| **Naive Bayes Classifier**         | Bộ phân loại dựa trên công thức xác suất Bayes với giả định các đặc trưng là độc lập có điều kiện.                                                           |
-| **Precision / Recall / F1-score**  | Các chỉ số đánh giá chất lượng mô hình phân loại.                                                                                                            |
-<br>
-
-### Chương 2: CƠ SỞ LÝ THUYẾT VÀ MÔ HÌNH NAIVE BAYES
-#### 1. Giới thiệu về xác suất Bayes:
-    Thuật toán Naive Bayes được xây dựng dựa trên định lý Bayes, một trong những nền tảng cơ bản của xác suất thống kê. Định lý Bayes mô tả mối quan hệ giữa xác suất tiên nghiệm, xác suất có điều kiện, và xác suất hậu nghiệm của các biến ngẫu nhiên.
-<br>
-
-$$ P(Y|X) = \frac{P(X|Y)P(Y)}{P(X)} $$
-<br>
-
-Trong đó:
-- $P(Y|X)$ là xác suất hậu nghiệm - Xác suất của lớp $Y$ khi biết các đặc trưng $X$
-- $P(X|Y)$ là xác suất tiên ***likelihood*** - khả năng xảy ra dữ liệu $X$ khi biết lớp $Y$.
-- $P(Y)$ là xác suất tiên nghiệm - xác suất xảy ra lớp $Y$ trước khi quan sát dữ liệu
-- $P(X)$ là xác suất ***biên***, dùng để chuẩn hóa.
-
-Trong bài toán phân loại, xác suất ***biên*** $P(X)$ là hằng số chung cho mọi lớp, nên ta có thể so sánh trực tiếp:
-<br>
-
-$$\hat{Y} = argmax_{Y}P(Y)P(X|Y)$$
-<br>
-
-#### 2. Giả thiết độc lập có điều kiện trong Naive Bayes
-Điểm đặc trưng của Naive Bayes là **giả định các đặc trưng đầu vào là độc lập có điều kiện** khi biết lớp $Y$:
-<br>
-
-$$P(X|Y) = \prod_{i=1}^{n}P(X_i|Y)$$
-<br>
-
-Giả định này đơn giản hóa việc tính toán xác suất, giúp mô hình hoạt động nhanh và dễ huấn luyện, ngay cả với dữ liệu có nhiều thuộc tính.
-<br>
-
-Mặc dù trong thực tế các đặc trưng thường có quan hệ phụ thuộc lẫn nhau, Naive Bayes vẫn cho kết quả đáng tin cậy trong nhiều ứng dụng, đặc biệt là ***phân loại văn bản, phân loại email spam, và phân tích rủi ro***.
-<br>
-
-#### 3. Các biến thể của Naive Bayes
-**a. Gaussian Naive Bayes**
-<br>
-
-Gaussian Naive Bayes là một dạng của phương pháp Naive Bayes hoạt động với ***các thuộc tính liên tục (continuous attributes)*** và các đặc trưng dữ liệu (data features) ***tuân theo phân phối Gaussian (Gaussian distribution) trong toàn bộ tập dữ liệu***. Giả định “ngây thơ” (naive) này giúp đơn giản hóa các phép tính và làm cho mô hình trở nên nhanh chóng và hiệu quả. Gaussian Naive Bayes được sử dụng rộng rãi vì nó hoạt động tốt ngay cả với các tập dữ liệu nhỏ và dễ dàng để triển khai và giải thích.
-<br>
-
-**b. Multinominal Naive Bayes**
-<br>
-
-Multinomial Naive Bayes (MNB) là một trong những biến thể của thuật toán Naive Bayes lý tưởng cho ***dữ liệu rời rạc (discrete data)*** và thường được ***sử dụng trong các bài toán phân loại văn bản (text classification)***. Nó ***mô hình hóa tần suất xuất hiện của các từ (frequency of words)*** dưới dạng **số đếm (counts)** và giả định rằng ***mỗi đặc trưng hoặc mỗi từ được phân phối đa thức (multinomially distributed)***. MNB được sử dụng rộng rãi cho các tác vụ như phân loại tài liệu dựa trên tần suất từ, ví dụ điển hình là trong việc phát hiện thư rác (spam email detection).
-<br>
+# High-Performance NIDS using Adaptive Gaussian Naive Bayes
 
-**Cách Multinominal Naive Bayes thực hiện**
-<br>
+> **Hệ thống Phát hiện Xâm nhập Mạng (NIDS) hiệu năng cao sử dụng thuật toán Global Empirical MAP**
 
-Trong Multinomial Naive Bayes, từ "Naive" (Ngây thơ) có nghĩa là phương pháp này giả định rằng tất cả các đặc trưng, chẳng hạn như các từ trong một câu, là độc lập với nhau; và "Multinomial" (Đa thức) đề cập đến số lần một từ xuất hiện hoặc tần suất một danh mục xảy ra. Nó hoạt động bằng cách sử dụng số lần đếm từ để phân loại văn bản. Ý tưởng chính là nó giả định mỗi từ trong một tin nhắn hoặc một đặc trưng là độc lập với những từ khác. Điều này có nghĩa là sự hiện diện của một từ không ảnh hưởng đến sự hiện diện của một từ khác, làm cho mô hình dễ sử dụng.
-<br>
+## Giới thiệu (Overview)
 
-Mô hình xem xét số lần mỗi từ xuất hiện trong các tin nhắn từ các danh mục khác nhau (chẳng hạn như "thư rác" (spam) hoặc "không phải thư rác" (not spam)). Ví dụ, nếu từ "free" (miễn phí) xuất hiện thường xuyên trong các tin nhắn rác, điều đó sẽ được sử dụng để giúp dự đoán liệu một tin nhắn mới có phải là thư rác hay không.
-<br>
+Dự án này tập trung giải quyết các hạn chế cốt lõi của các thuật toán xác suất truyền thống (như **Maximum Likelihood Estimation - MLE**) trong bài toán an ninh mạng, cụ thể là lỗi **"Zero-frequency problem"** (Điểm kỳ dị) và hiện tượng **Overfitting** khi gặp dữ liệu thưa.
 
-Để tính toán xác suất một tin nhắn thuộc về một danh mục nhất định, Multinomial Naive Bayes sử dụng phân phối đa thức:
-<br>
+Thay vì sử dụng các thư viện có sẵn (như `scikit-learn` với tham số làm trơn cố định), dự án đề xuất và hiện thực hóa thuật toán **Global Empirical MAP (Maximum A Posteriori)**. Thuật toán này sử dụng tham số làm trơn thích ứng (Adaptive Smoothing), được chứng minh toán học giúp hệ thống hoạt động ổn định trên dữ liệu lớn và giảm thiểu báo động giả (False Positives).
 
-$$P(X) = \frac{n!}{n_1!n_2!n_3!...n_m!}p_1^{n_1}p_2^{n_2}p_3^{n_3}...p_m^{n_m}$$
-<br>
+## Tính năng nổi bật (Key Features)
 
-Trong đó:
-- $n$ là tổng số lượt thử nghiệm
-- $n_i$ là **số đếm** sự xuất hiện của đầu ra $i$
-- $p_i$ là xác suất xảy ra đầu ra $i$
-<br>
+* **Thuật toán Global Empirical MAP:** Tự cài đặt (Custom Implementation) thuật toán Naive Bayes với cơ chế làm trơn dựa trên phương sai toàn cục, khắc phục lỗi chia cho 0.
+* **Chứng minh Toán học:** Sử dụng **Khai triển Taylor** để tối ưu hóa tham số  tỉ lệ nghịch với kích thước mẫu ().
+* **Master Dataset:** Tổng hợp và chuẩn hóa 3 bộ dữ liệu lớn nhất hiện nay (CIC-IDS-2017, CIC-IDS-2018, UNSW-NB15) với hơn 2.5 triệu mẫu.
+* **Semantic Label Mapping:** Đồng bộ hóa không gian nhãn giữa các bộ dữ liệu khác nhau (Ví dụ: Gộp *Exploits*, *Fuzzers* thành *Web Attack*).
+* **Giảm Báo động giả (False Positives):** Hiệu quả vượt trội trong việc nhận diện các mẫu dữ liệu chưa từng biết (Zero-day anomalies).
 
-Để ước tính mức độ có khả năng xuất hiện của mỗi từ trong một lớp cụ thể, chẳng hạn như "thư rác" (spam) hoặc "không phải thư rác" (not spam), chúng ta sử dụng một phương pháp gọi là **Ước lượng Khả năng Hợp lý Tối đa (Maximum Likelihood Estimation - MLE)**. Điều này giúp tìm ra các xác suất dựa trên số lần đếm thực tế từ dữ liệu của chúng ta. Công thức là:
-<br>
+---
 
-$$\theta_{c,i} = \frac{count(w_i,c)+1}{N+v}$$
-<br>
+## Cơ sở Lý thuyết & Thuật toán
 
-Trong đó:
-- $count(w_i,c)$ là số lần từ $w_i$ xuất hiện trong tài liệu thuộc lớp $c$
-- $N$ là tổng số từ trong các tài liệu thuộc lớp $c$
-- $v$ là kích thước từ vựng, tổng số từ duy nhất (unique words) trong toàn bộ tập tài liệu (từ ấy có thể xuất hiện lần hai nhưng vẫn chỉ tính là 1)
-<br>
+### 1. Vấn đề của MLE (Maximum Likelihood Estimation)
 
-**Ví dụ**
-<br>
+Trong các mô hình Naive Bayes truyền thống, phương sai được ước lượng bằng công thức MLE. Khi một đặc trưng có phương sai mẫu bằng 0 (do dữ liệu thưa hoặc bị tấn công), hàm mật độ xác suất sẽ tiến tới vô cùng, gây ra lỗi tính toán (Singularities).
 
-| Message ID | Message Text | Class |
-| :----------: | :------------: | :-----: |
-|M1|"buy cheap now"|Spam|
-|M2|"limited offer buy"|Spam|
-|M3|"meet me now"|Not Spam|
-|M4|"let's catch up"|Not Spam|
+### 2. Giải pháp MAP (Maximum A Posteriori)
 
-<br>
+Sử dụng ước lượng MAP với phân phối tiên nghiệm **Inverse-Gamma** . Dựa trên **Khai triển Taylor bậc 1**, tôi đã chứng minh được tham số làm trơn tối ưu () cần tuân theo quy luật:
 
-**B1:** Tập từ vựng $V$ = **{buy, cheap, now, limited, offer, meet, me, let's, catch, up}** 
-<br>
+$$\epsilon \approx \frac{2\beta}{N} \propto \frac{1}{N}$$
 
-$\Rightarrow v = 10$
+**Công thức cài đặt thực nghiệm:**
 
-**B2:** 
+$$\epsilon_{ideal} = \frac{Mean(Var(X))}{N}$$
 
-Tần số từ theo lớp:
+---
 
-**Lớp Spam (M1, M2)**
-- buy: 2
-- cheap: 1
-- now: 1
-- limited: 1
-- offer: 1
+## Cấu trúc Dữ liệu (Dataset)
 
-$\Rightarrow$ Tổng số từ: 6
+Dự án sử dụng bộ **Master Dataset** được xây dựng từ quy trình Data Engineering nghiêm ngặt:
 
-**Lớp Not Spam (M3, M4)**
-- meet: 1
-- me: 1
-- now: 1
-- let's: 1
-- catch: 1
-- up: 1
+| Bộ dữ liệu gốc | Vai trò | Số lượng mẫu (Approx) |
+| --- | --- | --- |
+| **CIC-IDS-2017** | Nền tảng chính | ~1.3 triệu |
+| **CIC-IDS-2018** | Bổ sung lớp tấn công hiện đại | ~1 triệu |
+| **UNSW-NB15** | Bổ sung các lớp hiếm (Web Attack) | ~200k |
 
-$\Rightarrow$ Tổng số từ: 6
+**Quy trình xử lý:**
 
-**B3:** Message mẫu: *"Buy now"*
+1. **Cleaning:** Loại bỏ các cột định danh (IP, Timestamp, Flow ID).
+2. **Filtering:** Loại bỏ các cột có phương sai bằng 0 (Zero Variance).
+3. **Mapping:** Ánh xạ nhãn về 8 lớp chuẩn: *Benign, DoS, DDoS, PortScan, Bot, Web Attack, Infiltration, BruteForce*.
 
-**B4:** Áp dụng công thức MNB:
-<br>
+---
 
-$$P(C|d) \space ∝ \space P(C) \bullet \prod_iP(w_i|C)^{f_i}$$
-<br>
+## Cài đặt & Sử dụng (Installation & Usage)
 
-Trong đó $f_i$ là tần suất xuất hiện của từ thứ $i$ trong xâu kiểm tra.
-<br>
+### Yêu cầu hệ thống
 
-**Xác suất tiên nghiệm**: 
-<br>
+* Python 3.8+
+* Jupyter Notebook
+* RAM: Tối thiểu 8GB (Do xử lý dataset lớn)
 
-$$
-P(Spam) = \frac{D_{Spam}}{D} = \frac{2}{4} = 0.5
-\newline
-P(Not Spam) = \frac{D_{Not Spam}}{D} = \frac{2}{4} = 0.5
-$$
+### Cài đặt thư viện
 
-<br>
+```bash
+pip install numpy pandas scikit-learn matplotlib seaborn
 
-Trong đó:
-- $D_{Spam}$ là Số văn bản nhãn Spam
-- $D_{Not Spam}$ la số văn bản nhãn Not Spam
-- $D$ là tổng số văn bản
-<br>
+```
 
-**Áp dụng công thức làm mịn Laplace** Mục đích là tránh xác suất bằng 0
-<br>
+### Hướng dẫn chạy
 
-$$P(w|C) = \frac{count(w,C)+\alpha}{(total words in C) + \alpha v}$$
-<br>
+1. **Chuẩn bị dữ liệu:**
+Chạy file `CleaningData.py` (hoặc Notebook tương ứng) để tạo ra file `MASTER_DATASET_FINAL.csv`.
+2. **Huấn luyện & Đánh giá:**
+Mở `MAP-MLE-Scikit.ipynb` và chạy lần lượt các cells:
+* Cell 1-2: Load thư viện và Dữ liệu.
+* Cell 3-4: Định nghĩa Class `GaussianNB_MLE` và `GaussianNB_MAP`.
+* Cell 5: Chạy kịch bản so sánh (Hold-out / Cross-validation).
+* Cell Final: Trực quan hóa kết quả.
 
-Trong đó: $\alpha$ là hệ số làm mịn Laplace (thường bằng 1)
-<br>
 
-**Với lớp nhãn Spam**
-<br>
 
-$$
-P(buy|Spam) = \frac{2+1}{6+10} = \frac{3}{16} 
-\newline
-P(new|Spam) = \frac{1+1}{6+10} = \frac{2}{16}
-\newline
-P(Spam|d) \space ∝ \space 0.5\bullet\frac{3}{16}\bullet\frac{2}{16}=\frac{3}{256}
-$$
+---
 
-<br>
+## Kết quả Thực nghiệm (Results)
 
-**Với lớp nhãn Not Spam**
-<br>
+Dưới đây là bảng so sánh hiệu năng giữa thuật toán đề xuất (MAP) và các phương pháp khác trên tập kiểm thử (Hold-out 20%):
 
-$$
-P(buy|Not Spam) = \frac{0+1}{6+10} = \frac{1}{16} 
-\newline
-P(new|Not Spam) = \frac{1+1}{6+10} = \frac{2}{16}
-\newline
-P(Not Spam|d) \space ∝ \space 0.5\bullet\frac{1}{16}\bullet\frac{2}{16}=\frac{1}{256}
-$$
+| Mô hình | Macro F1-Score | Accuracy | Training Time |
+| --- | --- | --- | --- |
+| **GNB-MLE (Baseline)** | 0.6822 | 76.21% | ~6.5s |
+| **Scikit-learn (Benchmark)** | 0.6906 | 76.55% | ~6.4s |
+| **GNB-MAP (Proposed)** | **0.6931** | **76.87%** | **~6.5s** |
 
-<br>
+### Điểm nhấn (Highlights):
 
-**B5: Gán nhãn cuối cùng**
-<br>
+* **Cải thiện đáng kể** độ chính xác cho các lớp tấn công khó: **Infiltration (+3.0%)** và **PortScan (+3.7%)**.
+* **Robustness:** Trong kịch bản kiểm thử chéo trên bộ dữ liệu lạ (*Friday-DDoS*), mô hình MAP đã giảm thiểu được **351 cảnh báo giả (False Positives)** so với MLE.
+* **Zero-overhead:** Không làm tăng chi phí tính toán so với thuật toán gốc.
 
-$Vì, \space P(Spam|d) = \frac{3}{256} > P(Not Spam|d) = \frac{1}{256} \newline$
-Nên *"buy now"* có nhãn là ***Spam***.
+---
 
-<br>
+## Biểu đồ (Visualization)
+![Biểu đồ so sánh](confusion_matrices.png)
+![Biểu đồ so sánh](confusion_matrix_script3.png)
+---
 
-**c. Bernoulli Naive Bayes**
-<br>
+## Tác giả (Author)
 
-Bernoulli Naive Bayes là một dạng con (subcategory) của Thuật toán Naive Bayes. Nó thường được sử dụng khi dữ liệu ở dạng nhị phân (binary) và nó mô hình hóa sự xuất hiện của các đặc trưng (features) bằng cách sử dụng phân phối Bernoulli (Bernoulli distribution). Nó được dùng để phân loại các đặc trưng nhị phân như 'Có' hoặc 'Không', '1' hoặc '0', 'Đúng' hoặc 'Sai', v.v. Cần lưu ý rằng các đặc trưng ở đây là độc lập với nhau.
-<br>
+* **Họ và tên:** Phạm Tùng Lâm
+* **Trường:** Đại học Bách Khoa Hà Nội (HUST)
+* **Giảng viên hướng dẫn:** TS. Vũ Thị Hương Giang
+* **Email:** lamcaro12212332@gmail.com
 
-**Trong đề tài này, dữ liệu rủi ro bảo mật được trích xuất từ các báo cáo pipeline, nên Multinomial Naive Bayes được sử dụng là chủ yếu.**
-<br>
-
-#### 4. Ưu, nhược điểm của Naive Bayes 
-**Ưu điểm**
-- Đơn giản, dễ cài đặt, tốc độ huấn luyện và dự đoán nhanh.
-- Hoạt động hiệu quả trên tập dữ liệu lớn, đặc biệt khi số lượng đặc trưng cao.
-- Không yêu cầu tài nguyên tính toán quá mạnh.
-- Dễ dàng mở rộng và tích hợp với các pipeline hiện có trong DevOps.
-<br>
-
-**Nhược điểm**
-- Giả thiết độc lập có điều kiện thường không đúng hoàn toàn trong thực tế, làm giảm độ chính xác.
-- Nhạy cảm với dữ liệu đầu vào có xác suất bằng 0 (giải quyết bằng Laplace smoothing).
-- Không mô hình hóa tốt các mối tương quan giữa đặc trưng, nên hiệu quả có thể giảm nếu dữ liệu phức tạp.
-
-### Chương 3: NAIVE BAYES GÁN ĐA NHÃN VỚI GIẢ ĐỊNH PHỤ THUỘC GIỮA CÁC NHÃN
-#### 1. Giới thiệu
-**Bài toán phân loại đa nhãn (Multilabel Classification)** cho phép mỗi mẫu dữ liệu thuộc về nhiều nhãn cùng lúc, ví dụ một bài báo có thể mang nhãn *Khoa học* và *Giáo dục* đồng thời. Trong khi đó, bộ phân loại **Naïve Bayes (NB)** cổ điển giả định các nhãn là **độc lập**, dẫn đến kết quả không chính xác khi tồn tại **phụ thuộc giữa các nhãn**.
-
-Để khắc phục hạn chế này, nhóm tác giả Hae-Cheon Kim, Jin-Hyeong Park, Dae-Won Kim, và Jaesung Lee (2020) đề xuất mô hình **MLNB-LD (Multilabel Naïve Bayes with Label Dependence)**. Mô hình này mở rộng Naïve Bayes bằng cách **xem xét mối quan hệ giữa các cặp nhãn (label pairs)** trong quá trình tính toán xác suất hậu nghiệm.
-
-#### 2. Phương pháp đề xuất và chứng minh toán học
-
-##### 2.1. Bài toán đặt ra
-
-Cho tập huấn luyện $ D = {(x, y)} $ với:
-
-* $x = (x_1, x_2, ..., x_m)$: vector đặc trưng đầu vào.
-* $y = (y_1, y_2, ..., y_n)$ : vector nhãn, trong đó $y_i \in \{0, 1\}$.
-
-Mục tiêu là tìm hàm giả thuyết $h: X \to Y$ sao cho:
-
-$$
-h(x) = \arg\max_{y \in Y} p(y|x)
-$$
-
-Theo định lý Bayes:
-
-$$
-p(y|x) = \frac{p(x, y)}{p(x)} \propto p(x, y)
-$$
-
-Vì $p(x)$ là hằng số đối với mọi $y$, ta chỉ cần cực đại hóa $p(x, y)$.
-
-##### 2.2. Chứng minh công thức xác suất kết hợp
-
-Ta có:
-
-$$
-p(x, y) = p(x_1, ..., x_m, y_1, ..., y_n)
-$$
-
-Sử dụng quy tắc chuỗi xác suất:
-
-$$
-p(x, y) = p(x_1|x_2,...,x_m,y_1,...,y_n) \cdot ... \cdot p(x_m|y_1,...,y_n) \cdot p(y_1|y_2,...,y_n) ... p(y_n)
-$$
-
-Giả định **độc lập có điều kiện (Naïve assumption)**: các đặc trưng và nhãn độc lập có điều kiện theo $y_n$:
-
-$$
-p(x_i | x_{i+1}, ..., x_m, y_1, ..., y_n) \approx p(x_i | y_n)
-$$
-
-Suy ra:
-
-$$
-p(x, y) \approx p(y_n) \prod_{i=1}^{m} p(x_i | y_n) \prod_{j=1}^{n-1} p(y_j | y_n)
-$$
-
-Tổng quát cho mọi nhãn $y_k$:
-
-$$
-p(x, y) \approx p(y_k) \prod_{i=1}^{m} p(x_i | y_k) \prod_{j=1}^{n} p(y_j | y_k)
-$$
-
-Để tổng hợp tất cả ước lượng từ $n$ nhãn, tác giả dùng **trung bình hình học (geometric mean)**:
-
-$$
-p(x, y) \approx \left( \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i) \right)^{1/n}
-$$
-
-Do đó, luật quyết định của bộ phân loại MLNB-LD là:
-
-$$
-h(x) = \arg\max_{y \in Y} \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
-$$
-
-**Giải thích:**
-* Đầu ra là vector $y$ nằm trong tập vector nhãn $Y$
-* Thành phần $p(x_j|y_i)$: xác suất đặc trưng theo nhãn.
-* Thành phần $p(y_k|y_i)$: thể hiện mối phụ thuộc giữa các cặp nhãn.
-* Trung bình hình học giúp giảm nhiễu khi có các giá trị xác suất cực nhỏ.
-
-##### 2.3. Thuật toán MLNB-LD (Algorithm 1)
-
-1. Tính xác suất biên của mỗi nhãn: $p(y_i)$
-2. Tính xác suất có điều kiện giữa nhãn: $p(y_k|y_i) = p(y_k, y_i)/p(y_i)$
-3. Tính xác suất có điều kiện giữa đặc trưng và nhãn: $p(x_j|y_i) = p(x_j, y_i)/p(y_i)$
-4. Tính giá trị $S(y)$:
-
-$$
-S(y) = \prod_{i=1}^{n} p(y_i) \prod_{j=1}^{m} p(x_j | y_i) \prod_{k=1}^{n} p(y_k | y_i)
-$$
-   
-6. Chọn nhãn dự đoán:
-   
-$$
-y^* = \arg\max_{y \in Y} S(y)
-$$
-
-Độ phức tạp tính toán của thuật toán xấp xỉ $(1 + 2n + 2m|X|) |Y|$.
-##### 2.4. Tài liệu tham khảo chính
-
-* Kim, H.-C., Park, J.-H., Kim, D.-W., & Lee, J. (2020). *Multilabel Naïve Bayes Classification Considering Label Dependence*. Pattern Recognition Letters. [https://doi.org/10.1016/j.patrec.2020.06.021](https://doi.org/10.1016/j.patrec.2020.06.021)
-
-
+---

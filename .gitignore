@@ -1,0 +1,14 @@
+# Bỏ qua dữ liệu
+data/
+*.csv
+*.pcap
+
+# Bỏ qua file rác hệ thống
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+
+# Bỏ qua môi trường ảo
+venv/
+env/
